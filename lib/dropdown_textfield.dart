@@ -60,6 +60,8 @@ class DropDownTextField extends StatefulWidget {
       this.validator,
       this.isEnabled = true,
       this.enableSearch = false,
+      this.hintText = "Select item",
+      this.searchHintText = "Search here",
       this.readOnly = true,
       this.dropdownRadius = 12,
       this.textFieldDecoration,
@@ -121,6 +123,8 @@ class DropDownTextField extends StatefulWidget {
     this.listPadding,
     this.listTextStyle,
     this.checkBoxProperty,
+    this.hintText,
+    this.searchHintText,
   })  : assert(initialValue == null || controller == null,
             "you cannot add both initialValue and multiController\nset initial value using controller\n\tMultiValueDropDownController(data:initial value)"),
         assert(
@@ -236,6 +240,12 @@ class DropDownTextField extends StatefulWidget {
   ///customize checkbox property
   final CheckBoxProperty? checkBoxProperty;
 
+  ///customize hint text
+  final String? hintText;
+
+  ///customize search hint text
+  final String? searchHintText;
+
   @override
   _DropDownTextFieldState createState() => _DropDownTextFieldState();
 }
@@ -246,7 +256,7 @@ class _DropDownTextFieldState extends State<DropDownTextField>
       CurveTween(curve: Curves.easeIn);
 
   late TextEditingController _cnt;
-  late String _hintText;
+  late String? _hintText;
 
   late bool _isExpanded;
   OverlayEntry? _entry;
@@ -289,7 +299,7 @@ class _DropDownTextFieldState extends State<DropDownTextField>
     );
     _heightFactor = _controller.drive(_easeInTween);
     _searchWidgetHeight = 60;
-    _hintText = "Select Item";
+    _hintText = widget.hintText;
     _searchFocusNode.addListener(() {
       if (!_searchFocusNode.hasFocus &&
           !_textFieldFocusNode.hasFocus &&
@@ -746,6 +756,7 @@ class _DropDownTextFieldState extends State<DropDownTextField>
               ),
               child: !widget.isMultiSelection
                   ? SingleSelection(
+                      hintText: widget.hintText,
                       mainController: _cnt,
                       autoSort: !widget.readOnly,
                       mainFocusNode: _textFieldFocusNode,
@@ -775,6 +786,7 @@ class _DropDownTextFieldState extends State<DropDownTextField>
                       searchAutofocus: _searchAutofocus,
                       searchDecoration: widget.searchDecoration,
                       searchShowCursor: widget.searchShowCursor,
+                      searchHintText: widget.searchHintText,
                       listPadding: _listPadding,
                       // onSearchTap: () {
                       //   double posFromBot =
@@ -866,7 +878,9 @@ class SingleSelection extends StatefulWidget {
       this.listTextStyle,
       this.searchDecoration,
       required this.listPadding,
-      this.clearIconProperty})
+      this.clearIconProperty,
+      this.hintText,
+      this.searchHintText})
       : super(key: key);
   final List<DropDownValueModel> dropDownList;
   final ValueSetter onChanged;
@@ -887,9 +901,11 @@ class SingleSelection extends StatefulWidget {
   final ListPadding listPadding;
   final InputDecoration? searchDecoration;
   final IconProperty? clearIconProperty;
+  final String? hintText;
+  final String? searchHintText;
 
   @override
-  State<SingleSelection> createState() => _SingleSelectionState();
+  State<SingleSelection> createState() => _SingleSelectionState(searchHintText!);
 }
 
 class _SingleSelectionState extends State<SingleSelection> {
@@ -897,6 +913,11 @@ class _SingleSelectionState extends State<SingleSelection> {
   late TextEditingController _searchCnt;
   late FocusScopeNode _focusScopeNode;
   late InputDecoration _inpDec;
+
+  final String searchHintText;
+
+  _SingleSelectionState(this.searchHintText);
+
   onItemChanged(String value) {
     setState(() {
       if (value.isEmpty) {
@@ -958,7 +979,7 @@ class _SingleSelectionState extends State<SingleSelection> {
                   }
                 },
                 decoration: _inpDec.copyWith(
-                  hintText: _inpDec.hintText ?? 'Search Here...',
+                  hintText: searchHintText,
                   suffixIcon: GestureDetector(
                     onTap: () {
                       widget.mainFocusNode.requestFocus();
