@@ -63,6 +63,7 @@ class DropDownTextField extends StatefulWidget {
       this.hintText = "Select item",
       this.searchHintText = "Search here",
       this.readOnly = true,
+      this.dropdownBackgroundColor,
       this.dropdownRadius = 12,
       this.textFieldDecoration,
       this.dropDownIconProperty,
@@ -108,6 +109,7 @@ class DropDownTextField extends StatefulWidget {
     this.onChanged,
     this.validator,
     this.isEnabled = true,
+    this.dropdownBackgroundColor,
     this.dropdownRadius = 12,
     this.dropDownIconProperty,
     this.textFieldDecoration,
@@ -156,6 +158,8 @@ class DropDownTextField extends StatefulWidget {
 
   ///define the radius of dropdown List ,default value is 12
   final double dropdownRadius;
+
+  final Color? dropdownBackgroundColor;
 
   ///initial value ,if it is null or not exist in dropDownList then it will not display value.
   final dynamic initialValue;
@@ -744,7 +748,7 @@ class _DropDownTextFieldState extends State<DropDownTextField>
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: widget.dropdownBackgroundColor,
                 borderRadius:
                     BorderRadius.all(Radius.circular(widget.dropdownRadius)),
                 boxShadow: const [
